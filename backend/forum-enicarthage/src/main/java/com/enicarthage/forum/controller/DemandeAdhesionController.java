@@ -118,7 +118,12 @@ public class DemandeAdhesionController {
             return ResponseEntity.notFound().build();
         }
         try {
-            Path filePath = Paths.get(cheminCV).toAbsolutePath().normalize();
+            Path uploadBase = Paths.get(DemandeAdhesionService.UPLOAD_DIR).toAbsolutePath().normalize();
+            Path filePath   = Paths.get(cheminCV).toAbsolutePath().normalize();
+            // Protection contre le path traversal
+            if (!filePath.startsWith(uploadBase)) {
+                return ResponseEntity.badRequest().build();
+            }
             Resource resource = new UrlResource(filePath.toUri());
             if (!resource.exists() || !resource.isReadable()) {
                 return ResponseEntity.notFound().build();

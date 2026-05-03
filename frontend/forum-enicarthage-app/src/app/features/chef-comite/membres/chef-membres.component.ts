@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MembreService, DemandeAdhesionService } from '../../../core/services/api.services';
 import { AuthService } from '../../../core/services/auth.service';
 import { Membre } from '../../../core/models';
@@ -13,6 +14,10 @@ export class ChefMembresComponent implements OnInit {
   membresAcceptes: Membre[] = [];
   candidaturesIA: any[] = [];
   loading = false;
+  showRefuserModal = false;
+  refuserTarget: any | null = null;
+  refuserErreur = '';
+  commentaireForm: FormGroup;
   private comiteId!: number;
   private comiteNom = '';
 
@@ -29,11 +34,14 @@ export class ChefMembresComponent implements OnInit {
     private membreService: MembreService,
     private demandeService: DemandeAdhesionService,
     private auth: AuthService,
-  ) {}
+    private fb: FormBuilder,
+  ) {
+    this.commentaireForm = this.fb.group({ commentaire: ['', Validators.required] });
+  }
 
   ngOnInit(): void {
     this.comiteId  = this.auth.currentUser?.comiteId ?? 0;
-    this.comiteNom = this.auth.currentUser?.nom ?? '';
+    this.comiteNom = (this.auth.currentUser as any)?.comiteNom ?? '';
     this.load();
     this.loadCandidaturesIA();
   }
@@ -51,11 +59,15 @@ export class ChefMembresComponent implements OnInit {
   }
 
   loadCandidaturesIA(): void {
-    // Récupère les candidatures MEMBRE du comité via le flux DemandeAdhesion (avec score IA)
     this.demandeService.getAll().subscribe({
       next: (all: any[]) => {
         this.candidaturesIA = all
-          .filter(c => c.posteVise === 'MEMBRE' && c.statut === 'EN_ATTENTE')
+          .filter(c =>
+            c.posteVise === 'MEMBRE' &&
+            c.statut === 'EN_ATTENTE' &&
+            // Ne montrer que les candidatures pour ce comité (si précisé)
+            (!this.comiteNom || !c.comiteVise || c.comiteVise === this.comiteNom)
+          )
           .sort((a, b) => (b.scoreIA || 0) - (a.scoreIA || 0));
       },
       error: () => { this.candidaturesIA = []; },
@@ -86,20 +98,29 @@ export class ChefMembresComponent implements OnInit {
   accepterCandidature(c: any): void {
     this.demandeService.accepter(c.id).subscribe({
       next: () => {
-        c.statut = 'ACCEPTE';
         this.candidaturesIA = this.candidaturesIA.filter(x => x.id !== c.id);
       },
       error: () => {},
     });
   }
 
-  refuserCandidature(c: any, commentaire: string): void {
-    this.demandeService.refuser(c.id, commentaire).subscribe({
+  openRefuserCandidature(c: any): void {
+    this.refuserTarget = c;
+    this.commentaireForm.reset();
+    this.refuserErreur = '';
+    this.showRefuserModal = true;
+  }
+
+  doRefuserCandidature(): void {
+    if (this.commentaireForm.invalid) return;
+    this.demandeService.refuser(this.refuserTarget.id, this.commentaireForm.value.commentaire).subscribe({
       next: () => {
-        c.statut = 'REFUSE';
-        this.candidaturesIA = this.candidaturesIA.filter(x => x.id !== c.id);
+        this.candidaturesIA = this.candidaturesIA.filter(x => x.id !== this.refuserTarget.id);
+        this.showRefuserModal = false;
       },
-      error: () => {},
+      error: () => {
+        this.refuserErreur = 'Erreur lors du refus. Veuillez réessayer.';
+      },
     });
   }
 
@@ -123,4 +144,6 @@ export class ChefMembresComponent implements OnInit {
   }
 
   cvUrl(c: any): string { return this.demandeService.telechargerCV(c.id); }
+
+  get f() { return this.commentaireForm.controls; }
 }

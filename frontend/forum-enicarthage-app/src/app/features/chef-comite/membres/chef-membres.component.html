@@ -21,7 +21,7 @@
       <div class="ia-actions">
         <a [href]="cvUrl(c)" target="_blank" class="btn-sm btn-cv" *ngIf="c.cheminCV">📄 CV</a>
         <button class="btn btn-success btn-sm" (click)="accepterCandidature(c)">✅ Accepter</button>
-        <button class="btn btn-danger  btn-sm" (click)="refuserCandidature(c, 'Profil non retenu')">❌ Refuser</button>
+        <button class="btn btn-danger  btn-sm" (click)="openRefuserCandidature(c)">❌ Refuser</button>
       </div>
     </div>
   </div>

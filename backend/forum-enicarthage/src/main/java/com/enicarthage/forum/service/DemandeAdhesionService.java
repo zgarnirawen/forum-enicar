@@ -34,7 +34,7 @@ public class DemandeAdhesionService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
 
-    private static final String UPLOAD_DIR = "uploads/candidatures/";
+    public static final String UPLOAD_DIR = "uploads/candidatures/";
 
     public DemandeAdhesionDTO soumettre(String nom, String email, String telephone, String linkedinUrl,
                                         PosteVise posteVise, NomComite comiteVise, String motivation, MultipartFile fichierCV) {
@@ -171,7 +171,9 @@ public class DemandeAdhesionService {
                             .role(role)
                             .actif(true)
                             .build();
-                    return utilisateurRepository.save(newUser);
+                    Utilisateur saved = utilisateurRepository.save(newUser);
+                    envoyerEmailAcceptation(demande.getEmail(), demande.getNom(), role.name(), tempPassword);
+                    return saved;
                 });
         demande.setUtilisateurIdCree(user.getId());
         
