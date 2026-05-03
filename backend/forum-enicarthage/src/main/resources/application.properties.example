@@ -1,0 +1,44 @@
+# ===== APPLICATION CONFIG =====
+spring.application.name=forum-enicarthage
+server.port=8080
+server.servlet.context-path=/
+
+# ===== DataSource =====
+spring.datasource.url=jdbc:mysql://localhost:3306/forum_enicarthage?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=root123
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# ===== JPA — validate en prod, never update =====
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=false
+spring.jpa.open-in-view=false
+
+# ===== Log4j2 =====
+logging.config=classpath:log4j2.xml
+
+# ===== JWT =====
+# Secret must be Base64-encoded, min 256 bits — override in env variable APP_JWT_SECRET
+app.jwt.secret=${APP_JWT_SECRET:3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b}
+app.jwt.expiration=86400000
+
+# ===== Google OAuth2 =====
+# IMPORTANT: Replace with your actual Google Cloud credentials
+# Get these from: https://console.cloud.google.com/
+# DO NOT commit the actual values to git - use environment variables in production
+spring.security.oauth2.client.registration.google.client-id=${GOOGLE_CLIENT_ID:YOUR_GOOGLE_CLIENT_ID_HERE}
+spring.security.oauth2.client.registration.google.client-secret=${GOOGLE_CLIENT_SECRET:YOUR_GOOGLE_CLIENT_SECRET_HERE}
+spring.security.oauth2.client.registration.google.redirect-uri=http://localhost:8080/login/oauth2/code/google
+spring.security.oauth2.client.registration.google.scope=profile,email
+spring.security.oauth2.client.provider.google.user-name-attribute=sub
+
+# ===== CORS CONFIGURATION =====
+server.allowed-origins=http://localhost:4200,http://localhost:3000
+server.allowed-methods=GET,POST,PUT,DELETE,PATCH,OPTIONS
+server.allowed-headers=*
+server.allow-credentials=true
+
+# ===== WebSocket =====
+server.tomcat.remote-ip-header=x-forwarded-for
+server.tomcat.protocol-header=x-forwarded-proto

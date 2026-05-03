@@ -1,0 +1,111 @@
+# Root .gitignore for Forum ENICarthage project
+
+# ===== BACKEND (Spring Boot) =====
+backend/forum-enicarthage/target/
+backend/forum-enicarthage/.mvn/
+backend/forum-enicarthage/mvnw
+backend/forum-enicarthage/mvnw.cmd
+backend/forum-enicarthage/*.jar
+backend/forum-enicarthage/*.war
+target/n
+backend/forum-enicarthage/target/
+*.jar
+*.log
+ backend/forum-enicarthage/target/classes/application.properties
+# ===== SENSITIVE FILES - DO NOT COMMIT =====
+# Backend configurations with secrets
+backend/forum-enicarthage/src/main/resources/application*.properties
+!backend/forum-enicarthage/src/main/resources/application.properties.example
+backend/forum-enicarthage/src/main/resources/application-*.properties
+
+# Frontend environment files with API keys
+frontend/forum-enicarthage-app/src/environments/*.local.ts
+frontend/forum-enicarthage-app/src/environments/environment.*.ts
+!frontend/forum-enicarthage-app/src/environments/environment.ts
+!frontend/forum-enicarthage-app/src/environments/environment.prod.ts
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Google Cloud credentials
+*-credentials.json
+google-cloud-key.json
+.google-cloud-credentials.json
+
+# API Keys and Secrets
+*.key
+*.pem
+*.p12
+secrets.json
+config/secrets/*
+
+# ===== IDE AND EDITOR =====
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+.DS_Store
+Thumbs.db
+
+# ===== BUILD OUTPUTS =====
+/dist
+/tmp
+/out-tsc
+/build
+*.jar
+*.war
+*.ear
+
+# ===== NODE & NPM =====
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# ===== PYTHON & PIP =====
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+ENV/
+
+# ===== OS SPECIFIC =====
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.directory
+
+# ===== TEMPORARY FILES =====
+*.tmp
+*.bak
+*.backup
+*.log
+logs/
+*.log.json
+
+# ===== MACOS =====
+.AppleDouble
+.LSOverride
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# ===== WINDOWS =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini

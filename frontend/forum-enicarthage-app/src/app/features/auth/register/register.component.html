@@ -1,0 +1,137 @@
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="brand">
+      <div class="brand-logo">FE</div>
+      <span class="brand-name">Forum ENICarthage</span>
+    </div>
+    <div class="steps-visual">
+      <div class="step-item" [class.done]="step > 1" [class.active]="step === 1">
+        <div class="step-circle">{{ step > 1 ? '✓' : '1' }}</div>
+        <div class="step-info">
+          <div class="step-title">Informations</div>
+          <div class="step-sub">Nom, email et mot de passe</div>
+        </div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" [class.done]="step > 2" [class.active]="step === 2">
+        <div class="step-circle">{{ step > 2 ? '✓' : '2' }}</div>
+        <div class="step-info">
+          <div class="step-title">Rôle</div>
+          <div class="step-sub">Choisissez votre position</div>
+        </div>
+      </div>
+    </div>
+    <div class="left-quote">
+      "Ensemble, construisons le meilleur Forum ENICarthage"
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+
+      <!-- SUCCESS -->
+      <div class="success-state" *ngIf="success">
+        <div class="success-icon">✓</div>
+        <h3>Compte créé !</h3>
+        <p>Vous allez être redirigé vers la page de connexion...</p>
+      </div>
+
+      <ng-container *ngIf="!success">
+        <div class="auth-card-header">
+          <h2>Créer un compte</h2>
+          <p>Étape {{ step }} / 2</p>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="step * 50"></div>
+          </div>
+        </div>
+
+        <div class="alert-error" *ngIf="error">⚠ {{ error }}</div>
+
+        <form [formGroup]="form">
+
+          <!-- STEP 1 -->
+          <div *ngIf="step === 1">
+            <div class="field" [class.error]="f['nom'].touched && f['nom'].invalid">
+              <label>Nom complet</label>
+              <div class="input-wrap">
+                <span class="input-icon">👤</span>
+                <input type="text" formControlName="nom" placeholder="Prénom Nom">
+              </div>
+              <span class="field-error" *ngIf="f['nom'].touched && f['nom'].invalid">Nom requis (min. 2 caractères)</span>
+            </div>
+
+            <div class="field" [class.error]="f['email'].touched && f['email'].invalid">
+              <label>Email</label>
+              <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <input type="email" formControlName="email" placeholder="vous@enicarthage.tn">
+              </div>
+              <span class="field-error" *ngIf="f['email'].touched && f['email'].invalid">Email invalide</span>
+            </div>
+
+            <div class="field" [class.error]="f['motDePasse'].touched && f['motDePasse'].invalid">
+              <label>Mot de passe</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input type="password" formControlName="motDePasse" placeholder="Min. 8 caractères">
+              </div>
+              <!-- Password strength -->
+              <div class="pw-strength">
+                <div class="pw-bars">
+                  <div class="pw-bar" [class.active]="pwStrength >= 1" [class.weak]="pwStrength === 1"></div>
+                  <div class="pw-bar" [class.active]="pwStrength >= 2" [class.medium]="pwStrength === 2"></div>
+                  <div class="pw-bar" [class.active]="pwStrength >= 3" [class.strong]="pwStrength >= 3"></div>
+                  <div class="pw-bar" [class.active]="pwStrength >= 4" [class.strong]="pwStrength >= 3"></div>
+                </div>
+                <span class="pw-label" *ngIf="f['motDePasse'].value">
+                  {{ ['', 'Faible', 'Moyen', 'Fort', 'Très fort'][pwStrength] }}
+                </span>
+              </div>
+            </div>
+
+            <button type="button" class="btn-submit" (click)="nextStep()">
+              Continuer →
+            </button>
+
+            <!-- Google Sign-Up Divider -->
+            <div class="divider">
+              <span class="divider-text">Ou</span>
+            </div>
+
+            <!-- Google Sign-In Button -->
+            <div id="googleSignInRegisterButton" class="google-signin-container"></div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div *ngIf="step === 2">
+            <p class="role-intro">Sélectionnez votre rôle dans le Forum :</p>
+            <div class="role-grid">
+              <div class="role-card" *ngFor="let r of roles"
+                   [class.selected]="f['role'].value === r.value"
+                   (click)="selectRole(r.value)">
+                <div class="role-icon">{{ r.icon }}</div>
+                <div class="role-name">{{ r.label }}</div>
+                <div class="role-desc">{{ r.desc }}</div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button type="button" class="btn-back" (click)="step = 1">← Retour</button>
+              <button type="button" class="btn-submit flex1" [class.loading]="loading"
+                      [disabled]="loading" (click)="submit()">
+                <span *ngIf="!loading">Créer mon compte</span>
+                <span *ngIf="loading" class="spinner"></span>
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+        <div class="auth-footer">
+          Déjà un compte ? <a routerLink="/auth/login">Se connecter</a>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+// Importe les styles de login partagés
+@import '../login/login.component.scss';
+
+.steps-visual {
+  display: flex; flex-direction: column; gap: 0;
+  margin: 40px 0;
+}
+
+.step-item {
+  display: flex; align-items: center; gap: 16px;
+  opacity: .45; transition: opacity .3s;
+
+  &.active, &.done { opacity: 1; }
+
+  .step-circle {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #64748B;
+    flex-shrink: 0; transition: all .3s;
+  }
+
+  &.active .step-circle {
+    background: #1E40AF; border-color: #1E40AF; color: white;
+  }
+  &.done .step-circle {
+    background: #059669; border-color: #059669; color: white;
+  }
+
+  .step-info {
+    .step-title { font-size: 14px; font-weight: 700; color: #FFFFFF; }
+    .step-sub { font-size: 12px; color: #64748B; margin-top: 2px; }
+  }
+}
+
+.step-line {
+  width: 2px; height: 28px; background: rgba(255,255,255,.1);
+  margin-left: 17px;
+}
+
+.left-quote {
+  font-size: 13px; color: #475569; font-style: italic;
+  border-left: 3px solid #1E40AF; padding-left: 14px;
+  line-height: 1.5;
+}
+
+// ── PROGRESS ──────────────────────────────────────────────────
+.progress-bar {
+  height: 4px; background: #E2E8F0; border-radius: 2px;
+  margin-top: 12px; overflow: hidden;
+
+  .progress-fill {
+    height: 100%; background: #1E40AF;
+    border-radius: 2px; transition: width .4s ease;
+  }
+}
+
+// ── ROLE CARDS ────────────────────────────────────────────────
+.role-intro {
+  font-size: 13px; color: #64748B; margin-bottom: 14px;
+}
+
+.role-grid {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 24px;
+}
+
+.role-card {
+  padding: 14px 16px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 14px;
+  transition: all .2s;
+
+  &:hover { border-color: #BFDBFE; background: #F0F7FF; }
+
+  &.selected {
+    border-color: #1E40AF;
+    background: #EFF6FF;
+    box-shadow: 0 0 0 3px rgba(30,64,175,.1);
+  }
+
+  .role-icon { font-size: 22px; }
+  .role-name { font-size: 14px; font-weight: 700; color: #0F172A; }
+  .role-desc { font-size: 12px; color: #64748B; margin-top: 2px; }
+}
+
+// ── BTN ROW ───────────────────────────────────────────────────
+.btn-row {
+  display: flex; gap: 10px;
+}
+
+.btn-back {
+  padding: 12px 20px;
+  background: #F1F5F9; border: 1.5px solid #E2E8F0;
+  border-radius: 10px; font-family: inherit;
+  font-size: 13px; font-weight: 600; color: #334155;
+  cursor: pointer; white-space: nowrap;
+  transition: all .2s;
+
+  &:hover { background: #E2E8F0; }
+}
+
+.flex1 { flex: 1; }
+
+// ── SUCCESS ───────────────────────────────────────────────────
+.success-state {
+  text-align: center; padding: 32px 0;
+
+  .success-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #D1FAE5; color: #059669;
+    font-size: 28px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+
+  h3 { font-size: 20px; font-weight: 700; color: #0F172A; margin-bottom: 8px; }
+  p { font-size: 13px; color: #64748B; }
+}
+
+// ── PASSWORD STRENGTH ─────────────────────────────────────────
+.pw-strength {
+  display: flex; align-items: center; gap: 10px; margin-top: 8px;
+}
+
+.pw-bars {
+  display: flex; gap: 4px; flex: 1;
+}
+
+.pw-bar {
+  flex: 1; height: 4px; border-radius: 2px;
+  background: #E2E8F0; transition: background .3s;
+
+  &.active.weak   { background: #EF4444; }
+  &.active.medium { background: #F59E0B; }
+  &.active.strong { background: #10B981; }
+}
+
+.pw-label {
+  font-size: 11px; font-weight: 600; color: #64748B;
+  min-width: 60px; text-align: right;
+}
