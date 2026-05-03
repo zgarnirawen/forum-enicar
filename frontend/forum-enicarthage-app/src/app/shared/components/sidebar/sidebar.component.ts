@@ -36,11 +36,12 @@ export class SidebarComponent implements OnInit {
       { label: 'Rapports',        icon: '📑',  route: '/pilotage/rapports' },
     ],
     COORDINATRICE: [
-      { label: 'Dashboard',       icon: '⊞',  route: '/coordinatrice/dashboard' },
-      { label: 'Comités',         icon: '📋',  route: '/coordinatrice/comites' },
-      { label: 'Tâches',          icon: '✅',  route: '/coordinatrice/taches' },
-      { label: 'Workshops',       icon: '🎓',  route: '/coordinatrice/workshops' },
-      { label: 'Planning',        icon: '📅',  route: '/coordinatrice/planning' },
+      { label: 'Dashboard',       icon: '⊞',  route: '/coordinatrice/dashboard'    },
+      { label: 'Candidatures',    icon: '📄',  route: '/coordinatrice/candidatures' },
+      { label: 'Comités',         icon: '📋',  route: '/coordinatrice/comites'      },
+      { label: 'Tâches',          icon: '✅',  route: '/coordinatrice/taches'       },
+      { label: 'Workshops',       icon: '🎓',  route: '/coordinatrice/workshops'    },
+      { label: 'Planning',        icon: '📅',  route: '/coordinatrice/planning'     },
     ],
     CHEF_COMITE: [
       { label: 'Dashboard',       icon: '⊞',  route: '/chef-comite/dashboard' },

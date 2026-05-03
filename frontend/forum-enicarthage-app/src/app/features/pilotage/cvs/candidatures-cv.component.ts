@@ -96,5 +96,9 @@ export class CandidaturesCVComponent implements OnInit {
     return 'score-low';
   }
 
+  cvUrl(c: any): string {
+    return this.demandeService.telechargerCV(c.id);
+  }
+
   get f() { return this.commentaireForm.controls; }
 }

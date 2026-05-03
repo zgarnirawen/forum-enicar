@@ -1,0 +1,87 @@
+/* src/app/features/admin/historique/historique.component.scss */
+.loading-state { text-align: center; padding: 60px; color: #64748B; }
+.empty-state   { text-align: center; padding: 60px; color: #94A3B8; font-size: 0.95rem; }
+
+.historique-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.edition-card {
+  background: #fff; border-radius: 12px; border: 1px solid #E2E8F0;
+  padding: 20px; cursor: pointer; transition: all .2s;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.edition-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); border-color: #93C5FD; }
+
+.edition-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.edition-badge {
+  background: #1E40AF; color: #fff; font-weight: 700; font-size: 1.1rem;
+  padding: 4px 14px; border-radius: 20px;
+}
+.statut-chip {
+  font-size: 0.75rem; font-weight: 600; padding: 3px 10px;
+  border-radius: 12px; text-transform: uppercase; letter-spacing: .05em;
+}
+.statut-chip.cloture   { background: #F1F5F9; color: #475569; }
+.statut-chip.encours   { background: #DBEAFE; color: #1E40AF; }
+.statut-chip.planif    { background: #FEF9C3; color: #854D0E; }
+
+.edition-nom  { font-size: 1rem; font-weight: 600; color: #1E293B; margin: 0; }
+.edition-desc { font-size: 0.85rem; color: #64748B; margin: 0; }
+.edition-meta {
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 0.82rem; color: #94A3B8;
+}
+.btn-detail {
+  align-self: flex-start; background: none; border: none;
+  color: #1E40AF; font-size: 0.85rem; cursor: pointer; padding: 0;
+  font-weight: 500;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal-panel {
+  background: #fff; border-radius: 14px; width: 100%; max-width: 520px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.15); max-height: 90vh; overflow-y: auto;
+}
+.modal-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-bottom: 1px solid #F1F5F9;
+}
+.modal-hd h3 { font-size: 1rem; font-weight: 600; color: #1E293B; margin: 0; }
+.edition-tag {
+  background: #EFF6FF; color: #1E40AF; font-size: 0.8rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 8px; margin-left: 8px;
+}
+.modal-close {
+  background: none; border: none; font-size: 1.2rem; color: #94A3B8;
+  cursor: pointer; border-radius: 6px;
+}
+.modal-body { padding: 20px 24px; }
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.info-item { display: flex; flex-direction: column; gap: 4px; }
+.info-label {
+  font-size: 0.72rem; font-weight: 600; color: #94A3B8;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.comites-preview { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.comites-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.comite-chip {
+  background: #EFF6FF; color: #1E40AF; font-size: 0.78rem; font-weight: 500;
+  padding: 4px 10px; border-radius: 10px;
+}
+.modal-ft {
+  display: flex; justify-content: flex-end; padding: 16px 24px;
+  border-top: 1px solid #F1F5F9;
+}
+.btn { padding: 8px 18px; border-radius: 8px; font-size: 0.88rem; cursor: pointer; font-weight: 500; }
+.btn-outline { background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569; }

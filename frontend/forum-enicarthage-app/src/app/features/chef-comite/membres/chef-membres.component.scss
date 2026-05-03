@@ -6,6 +6,32 @@
   &.amber{background:#FEF3C7;color:#D97706;}
 }
 
+/* Candidatures IA */
+.ia-list { display:flex;flex-direction:column;gap:10px;margin-bottom:24px; }
+.ia-card {
+  background:#FFF;border:1px solid #E2E8F0;border-radius:12px;padding:14px 18px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.ia-avatar { width:40px;height:40px;border-radius:50%;background:#EDE9FE;color:#7C3AED;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.ia-info { flex:1;min-width:160px; }
+.ia-nom   { font-size:13px;font-weight:700;color:#0F172A; }
+.ia-email { font-size:12px;color:#64748B;margin-top:1px; }
+.ia-comite{ font-size:11px;color:#7C3AED;margin-top:2px; }
+.ia-score {
+  display:flex;flex-direction:column;align-items:center;padding:6px 12px;border-radius:8px;min-width:64px;
+  &.score-high{background:#D1FAE5;}
+  &.score-mid {background:#FEF3C7;}
+  &.score-low {background:#FEE2E2;}
+}
+.score-val{font-size:1.1rem;font-weight:700;}
+.score-lbl{font-size:0.68rem;color:#64748B;}
+.ia-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.btn-cv {
+  display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;
+  background:#EDE9FE;color:#7C3AED;font-size:11.5px;font-weight:700;text-decoration:none;
+  border:1px solid #DDD6FE;
+}
+
 .membres-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
 .membre-card { background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.04); }
 .mc-avatar { width:40px;height:40px;border-radius:50%;background:#DBEAFE;color:#1E40AF;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
@@ -31,3 +57,4 @@
 .btn-success{background:#10B981;color:white;&:hover{background:#059669;}}
 .btn-danger {background:#EF4444;color:white;&:hover{background:#DC2626;}}
 .empty-demandes{text-align:center;padding:24px;color:#94A3B8;font-size:13px;background:#F8FAFC;border-radius:12px;border:1px dashed #E2E8F0;}
+

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MembreService } from '../../../core/services/api.services';
+import { MembreService, DemandeAdhesionService } from '../../../core/services/api.services';
 import { AuthService } from '../../../core/services/auth.service';
 import { Membre } from '../../../core/models';
 
@@ -11,8 +11,10 @@ import { Membre } from '../../../core/models';
 export class ChefMembresComponent implements OnInit {
   demandesEnAttente: Membre[] = [];
   membresAcceptes: Membre[] = [];
+  candidaturesIA: any[] = [];
   loading = false;
   private comiteId!: number;
+  private comiteNom = '';
 
   mockDemandesEnAttente: Membre[] = [
     { id:20, utilisateurId:100, nom:'Karim Belhaj', email:'karim@enicarthage.tn', comiteId:1, comiteNom:'Design', statut:'EN_ATTENTE' },
@@ -23,12 +25,17 @@ export class ChefMembresComponent implements OnInit {
     { id:11, utilisateurId:11, nom:'Sara Trabelsi', email:'sara@enicarthage.tn', comiteId:1, comiteNom:'Design', statut:'ACCEPTE', dateAdhesion:'2025-01-20T09:00:00' },
   ];
 
-  constructor(private membreService: MembreService, private auth: AuthService) {}
+  constructor(
+    private membreService: MembreService,
+    private demandeService: DemandeAdhesionService,
+    private auth: AuthService,
+  ) {}
 
   ngOnInit(): void {
-    // FIX: comiteId comes from JWT claim (auth.currentUser.comiteId)
-    this.comiteId = this.auth.currentUser?.comiteId ?? 0;
+    this.comiteId  = this.auth.currentUser?.comiteId ?? 0;
+    this.comiteNom = this.auth.currentUser?.nom ?? '';
     this.load();
+    this.loadCandidaturesIA();
   }
 
   load(): void {
@@ -43,11 +50,22 @@ export class ChefMembresComponent implements OnInit {
     });
   }
 
+  loadCandidaturesIA(): void {
+    // Récupère les candidatures MEMBRE du comité via le flux DemandeAdhesion (avec score IA)
+    this.demandeService.getAll().subscribe({
+      next: (all: any[]) => {
+        this.candidaturesIA = all
+          .filter(c => c.posteVise === 'MEMBRE' && c.statut === 'EN_ATTENTE')
+          .sort((a, b) => (b.scoreIA || 0) - (a.scoreIA || 0));
+      },
+      error: () => { this.candidaturesIA = []; },
+    });
+  }
+
   accepter(membreId: number): void {
     this.membreService.accepter(membreId).subscribe({
       next: () => this.load(),
       error: () => {
-        // Mock: move from pending to accepted
         const idx = this.demandesEnAttente.findIndex(d => d.id === membreId);
         if (idx >= 0) {
           const m = { ...this.demandesEnAttente[idx], statut: 'ACCEPTE' as const };
@@ -65,13 +83,31 @@ export class ChefMembresComponent implements OnInit {
     });
   }
 
+  accepterCandidature(c: any): void {
+    this.demandeService.accepter(c.id).subscribe({
+      next: () => {
+        c.statut = 'ACCEPTE';
+        this.candidaturesIA = this.candidaturesIA.filter(x => x.id !== c.id);
+      },
+      error: () => {},
+    });
+  }
+
+  refuserCandidature(c: any, commentaire: string): void {
+    this.demandeService.refuser(c.id, commentaire).subscribe({
+      next: () => {
+        c.statut = 'REFUSE';
+        this.candidaturesIA = this.candidaturesIA.filter(x => x.id !== c.id);
+      },
+      error: () => {},
+    });
+  }
+
   initials(nom: string): string {
     return nom.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   }
 
-  get membres(): Membre[] {
-    return this.membresAcceptes;
-  }
+  get membres(): Membre[] { return this.membresAcceptes; }
 
   retirer(membreId: number): void {
     this.membreService.refuser(membreId).subscribe({
@@ -79,4 +115,12 @@ export class ChefMembresComponent implements OnInit {
       error: () => { this.membresAcceptes = this.membresAcceptes.filter(m => m.id !== membreId); }
     });
   }
+
+  scoreColor(s: number): string {
+    if (s >= 85) return 'score-high';
+    if (s >= 70) return 'score-mid';
+    return 'score-low';
+  }
+
+  cvUrl(c: any): string { return this.demandeService.telechargerCV(c.id); }
 }

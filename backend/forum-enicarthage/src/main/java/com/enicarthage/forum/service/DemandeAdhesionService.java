@@ -73,11 +73,68 @@ public class DemandeAdhesionService {
     }
 
     public void analyserAvecIA(DemandeAdhesion demande) {
-        // Simulation IA
-        double scoreSimule = Math.round(Math.random() * 3000.0) / 100.0 + 70.0; // 70-100
-        demande.setScoreIA(scoreSimule);
-        demande.setJustificationIA("Analyse simulée : Le profil correspond bien aux attentes du poste de " + demande.getPosteVise());
+        // Scoring heuristique basé sur les données de la demande.
+        // Un vrai microservice Python (FastAPI + parsing PDF) remplacerait cette logique.
+        double score = 50.0;
+
+        // Motivation : longueur et richesse du texte (+0–20 pts)
+        String motivation = demande.getMotivation() != null ? demande.getMotivation() : "";
+        int motLen = motivation.trim().length();
+        if (motLen >= 500) score += 20;
+        else if (motLen >= 300) score += 13;
+        else if (motLen >= 150) score += 7;
+
+        // Présence d'un CV (+15 pts)
+        if (demande.getCheminCV() != null && !demande.getCheminCV().isEmpty()) score += 15;
+
+        // Présence LinkedIn (+8 pts)
+        if (demande.getLinkedinUrl() != null && !demande.getLinkedinUrl().isBlank()) score += 8;
+
+        // Téléphone renseigné (+4 pts)
+        if (demande.getTelephone() != null && !demande.getTelephone().isBlank()) score += 4;
+
+        // Cohérence poste/comité (+3 pts)
+        if (demande.getPosteVise() == PosteVise.COORDINATRICE
+                || demande.getComiteVise() != null) score += 3;
+
+        // Plafonner à 100
+        score = Math.min(score, 100.0);
+        // Arrondir à 1 décimale
+        score = Math.round(score * 10.0) / 10.0;
+
+        String justification = buildJustification(demande, score);
+
+        demande.setScoreIA(score);
+        demande.setJustificationIA(justification);
         demandeRepository.save(demande);
+    }
+
+    private String buildJustification(DemandeAdhesion demande, double score) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Analyse IA du profil pour le poste ").append(demande.getPosteVise()).append(" : ");
+
+        if (score >= 85) sb.append("Profil excellent — ");
+        else if (score >= 70) sb.append("Bon profil — ");
+        else if (score >= 55) sb.append("Profil acceptable — ");
+        else sb.append("Profil insuffisant — ");
+
+        String motivation = demande.getMotivation() != null ? demande.getMotivation() : "";
+        if (motivation.length() >= 500)      sb.append("lettre de motivation très détaillée ; ");
+        else if (motivation.length() >= 300) sb.append("lettre de motivation satisfaisante ; ");
+        else if (motivation.length() >= 150) sb.append("lettre de motivation courte ; ");
+        else                                  sb.append("lettre de motivation insuffisante ; ");
+
+        if (demande.getCheminCV() != null && !demande.getCheminCV().isEmpty())
+            sb.append("CV joint ✓ ; ");
+        else
+            sb.append("CV manquant ✗ ; ");
+
+        if (demande.getLinkedinUrl() != null && !demande.getLinkedinUrl().isBlank())
+            sb.append("profil LinkedIn renseigné ✓.");
+        else
+            sb.append("profil LinkedIn absent.");
+
+        return sb.toString();
     }
 
     private final ConfigurationGlobaleService configService;
@@ -101,19 +158,21 @@ public class DemandeAdhesionService {
         demande.setStatut(StatutDemande.ACCEPTE);
         demande.setDateDecision(LocalDateTime.now());
 
-        // Création du compte
+        // Création du compte (si un compte avec cet email n'existe pas déjà)
         String tempPassword = UUID.randomUUID().toString().substring(0, 8);
         RoleEnum role = mapPosteToRole(demande.getPosteVise());
-        
-        Utilisateur user = Utilisateur.builder()
-                .nom(demande.getNom())
-                .email(demande.getEmail())
-                .motDePasse(passwordEncoder.encode(tempPassword))
-                .role(role)
-                .actif(true)
-                .build();
-        
-        utilisateurRepository.save(user);
+
+        Utilisateur user = utilisateurRepository.findByEmail(demande.getEmail())
+                .orElseGet(() -> {
+                    Utilisateur newUser = Utilisateur.builder()
+                            .nom(demande.getNom())
+                            .email(demande.getEmail())
+                            .motDePasse(passwordEncoder.encode(tempPassword))
+                            .role(role)
+                            .actif(true)
+                            .build();
+                    return utilisateurRepository.save(newUser);
+                });
         demande.setUtilisateurIdCree(user.getId());
         
         // Envoi email
@@ -159,6 +218,13 @@ public class DemandeAdhesionService {
         } catch (Exception e) {
             log.error("Erreur lors de l'envoi de l'email à {} : {}", email, e.getMessage());
         }
+    }
+
+    public DemandeAdhesionDTO analyserEtRetourner(Long id) {
+        DemandeAdhesion demande = demandeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Demande non trouvée"));
+        analyserAvecIA(demande);
+        return toDTO(demande);
     }
 
     public List<DemandeAdhesionDTO> findAll() {

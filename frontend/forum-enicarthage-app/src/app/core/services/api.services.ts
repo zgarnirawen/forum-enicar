@@ -49,7 +49,7 @@ export class ForumProjectService {
     return this.http.patch<ForumProject>(`${this.url}/${id}/archiver`, {});
   }
   cloturer(id: number): Observable<ForumProject> {
-    return this.http.patch<ForumProject>(`${this.url}/${id}/cloturer`, {});
+    return this.archiver(id);
   }
 }
 
@@ -172,6 +172,9 @@ export class DemandeAdhesionService {
   }
   analyserIA(id: number): Observable<any> {
     return this.http.post<any>(`${this.url}/${id}/analyser`, {});
+  }
+  telechargerCV(id: number): string {
+    return `${this.url}/${id}/cv`;
   }
 }
 

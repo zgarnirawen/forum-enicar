@@ -20,7 +20,7 @@ public class ConfigurationSystemeController {
     }
 
     @PutMapping("/phase")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','COORDINATRICE')")
     public ConfigurationSysteme setPhaseActive(@RequestParam PhaseRecrutement phase) {
         return configService.setPhaseActive(phase);
     }
