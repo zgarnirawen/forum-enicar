@@ -6,11 +6,18 @@ import com.enicarthage.forum.model.PosteVise;
 import com.enicarthage.forum.model.StatutDemande;
 import com.enicarthage.forum.service.DemandeAdhesionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -99,8 +106,36 @@ public class DemandeAdhesionController {
     @PostMapping("/{id}/analyser")
     @PreAuthorize("hasAnyRole('ADMIN','COMITE_PILOTAGE','COORDINATRICE','CHEF_COMITE')")
     public ResponseEntity<DemandeAdhesionDTO> analyserIA(@PathVariable Long id) {
+        return ResponseEntity.ok(demandeService.analyserEtRetourner(id));
+    }
+
+    @GetMapping("/{id}/cv")
+    @PreAuthorize("hasAnyRole('ADMIN','COMITE_PILOTAGE','COORDINATRICE','CHEF_COMITE')")
+    public ResponseEntity<Resource> telechargerCV(@PathVariable Long id) {
         DemandeAdhesionDTO demande = demandeService.findById(id);
-        // Note: l'analyse IA est déjà simulée à la soumission, mais on peut la refaire si besoin
-        return ResponseEntity.ok(demande);
+        String cheminCV = demande.getCheminCV();
+        if (cheminCV == null || cheminCV.isBlank()) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            Path uploadBase = Paths.get(DemandeAdhesionService.UPLOAD_DIR).toAbsolutePath().normalize();
+            Path filePath   = Paths.get(cheminCV).toAbsolutePath().normalize();
+            // Protection contre le path traversal
+            if (!filePath.startsWith(uploadBase)) {
+                return ResponseEntity.badRequest().build();
+            }
+            Resource resource = new UrlResource(filePath.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+            String filename = filePath.getFileName().toString();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + filename + "\"")
+                    .body(resource);
+        } catch (MalformedURLException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

@@ -1,0 +1,71 @@
+<!-- src/app/features/admin/historique/historique.component.html -->
+<app-layout title="Historique" subtitle="Archives des éditions passées du Forum ENICarthage">
+
+  <div class="loading-state" *ngIf="loading">Chargement de l'historique...</div>
+
+  <div class="historique-grid" *ngIf="!loading">
+
+    <div class="empty-state" *ngIf="projets.length === 0">
+      📁 Aucune édition archivée trouvée.
+    </div>
+
+    <div class="edition-card" *ngFor="let p of projets" (click)="open(p)">
+      <div class="edition-header">
+        <div class="edition-badge">{{ p.edition }}</div>
+        <span class="statut-chip" [ngClass]="statutColor(p.statut)">{{ p.statut | statut }}</span>
+      </div>
+      <h3 class="edition-nom">{{ p.nom }}</h3>
+      <p class="edition-desc">{{ p.description }}</p>
+      <div class="edition-meta">
+        <span>📍 {{ p.lieu }}</span>
+        <span>🗓 {{ p.dateEvenement | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <button class="btn-detail">Voir les détails →</button>
+    </div>
+
+  </div>
+
+  <!-- Panneau détail -->
+  <div class="modal-overlay" *ngIf="selected" (click)="close()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <div class="modal-hd">
+        <h3>{{ selected.nom }} <span class="edition-tag">{{ selected.edition }}</span></h3>
+        <button class="modal-close" (click)="close()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Lieu</span>
+            <span>{{ selected.lieu }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date début</span>
+            <span>{{ selected.dateDebut | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Jour J</span>
+            <span>{{ selected.dateEvenement | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Statut</span>
+            <span class="statut-chip" [ngClass]="statutColor(selected.statut)">{{ selected.statut | statut }}</span>
+          </div>
+        </div>
+        <div class="info-item" style="margin-top:16px;">
+          <span class="info-label">Description</span>
+          <p>{{ selected.description }}</p>
+        </div>
+        <div class="comites-preview" *ngIf="selected.comites && selected.comites.length > 0">
+          <span class="info-label">Comités ({{ selected.comites.length }})</span>
+          <div class="comites-chips">
+            <span class="comite-chip" *ngFor="let c of selected.comites">{{ c.nom }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn btn-outline" (click)="close()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+</app-layout>

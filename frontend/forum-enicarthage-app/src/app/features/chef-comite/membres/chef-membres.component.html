@@ -1,6 +1,31 @@
 <!-- src/app/features/chef-comite/membres/chef-membres.component.html -->
 <app-layout title="Membres du Comité" subtitle="Gérer les adhésions et l'équipe">
 
+  <!-- Candidatures avec score IA -->
+  <div class="section-head" *ngIf="candidaturesIA.length > 0">
+    <h3>Candidatures MEMBRE (Score IA) <span class="count amber">{{ candidaturesIA.length }}</span></h3>
+  </div>
+
+  <div class="ia-list" *ngIf="candidaturesIA.length > 0">
+    <div class="ia-card" *ngFor="let c of candidaturesIA">
+      <div class="ia-avatar">{{ c.nom ? c.nom[0] : '?' }}</div>
+      <div class="ia-info">
+        <div class="ia-nom">{{ c.nom }}</div>
+        <div class="ia-email">{{ c.email }}</div>
+        <div class="ia-comite" *ngIf="c.comiteVise">Comité : {{ c.comiteVise }}</div>
+      </div>
+      <div class="ia-score" [ngClass]="scoreColor(c.scoreIA)" *ngIf="c.scoreIA">
+        <div class="score-val">{{ c.scoreIA }}</div>
+        <div class="score-lbl">Score IA</div>
+      </div>
+      <div class="ia-actions">
+        <a [href]="cvUrl(c)" target="_blank" class="btn-sm btn-cv" *ngIf="c.cheminCV">📄 CV</a>
+        <button class="btn btn-success btn-sm" (click)="accepterCandidature(c)">✅ Accepter</button>
+        <button class="btn btn-danger  btn-sm" (click)="openRefuserCandidature(c)">❌ Refuser</button>
+      </div>
+    </div>
+  </div>
+
   <div class="section-head">
     <h3>Membres actifs <span class="count">{{ membres.length }}</span></h3>
   </div>
@@ -20,7 +45,7 @@
   </div>
 
   <div class="section-head" style="margin-top:28px;">
-    <h3>Demandes d'adhésion <span class="count amber">{{ demandesEnAttente.length }}</span></h3>
+    <h3>Demandes d'adhésion interne <span class="count amber">{{ demandesEnAttente.length }}</span></h3>
   </div>
 
   <div class="demandes-list">
@@ -39,3 +64,4 @@
   </div>
 
 </app-layout>
+

@@ -79,7 +79,8 @@
         </div>
         <div class="detail-row">
           <span class="dlabel">Fichier CV</span>
-          <a class="cv-link" href="#" (click)="$event.preventDefault()">📄 Télécharger le CV</a>
+          <a class="cv-link" [href]="cvUrl(selected)" target="_blank" *ngIf="selected.cheminCV; else noCV">📄 Télécharger le CV</a>
+          <ng-template #noCV><span style="color:#94A3B8">Aucun CV joint</span></ng-template>
         </div>
       </div>
       <div class="modal-ft" *ngIf="selected.statut === 'EN_ATTENTE'">

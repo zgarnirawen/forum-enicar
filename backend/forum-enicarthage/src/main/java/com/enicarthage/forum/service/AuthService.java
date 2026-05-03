@@ -41,11 +41,13 @@ public class AuthService {
         log.info("Inscription : {}", request.getEmail());
         if (utilisateurRepository.existsByEmail(request.getEmail()))
             throw new IllegalArgumentException("Email deja utilise : " + request.getEmail());
+        // L'inscription publique crée toujours un MEMBRE — les autres rôles
+        // sont attribués exclusivement via le flux de recrutement en cascade.
         Utilisateur user = Utilisateur.builder()
                 .nom(request.getNom())
                 .email(request.getEmail())
                 .motDePasse(passwordEncoder.encode(request.getMotDePasse()))
-                .role(request.getRole())
+                .role(RoleEnum.MEMBRE)
                 .actif(true)
                 .build();
         return toDTO(utilisateurRepository.save(user));
