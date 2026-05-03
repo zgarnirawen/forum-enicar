@@ -1,5 +1,5 @@
 package com.enicarthage.forum.dto;
-import com.enicarthage.forum.model.StatutWorkshop;
+
 import lombok.Data;
 import java.time.LocalDateTime;
 

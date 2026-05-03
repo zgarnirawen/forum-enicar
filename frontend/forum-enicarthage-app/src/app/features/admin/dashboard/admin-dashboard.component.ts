@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { StatistiquesService } from '../../../core/services/api.services';
+import { StatistiquesService, ConfigurationService } from '../../../core/services/api.services';
 import { KPIs, AvancementComite } from '../../../core/models';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
@@ -31,7 +31,19 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     { comiteNom: 'Projet',      total: 25, terminees: 9,  avancement: 38 },
   ];
 
-  constructor(private statsService: StatistiquesService) {}
+  constructor(
+    private statsService: StatistiquesService,
+    private configService: ConfigurationService
+  ) {}
+
+  phaseActive: string = 'PHASE_1_COORDINATRICE';
+  phaseLoading: boolean = false;
+  phases = [
+    { id: 'PHASE_1_COORDINATRICE', label: '1. Coordinatrice Générale' },
+    { id: 'PHASE_2_CHEFS', label: '2. Chefs de Comité' },
+    { id: 'PHASE_3_MEMBRES', label: '3. Membres de Comité' },
+    { id: 'TERMINE', label: '✓ Recrutement Terminé' }
+  ];
 
   ngOnInit(): void {
     this.statsService.getKPIs().subscribe({
@@ -41,6 +53,25 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     this.statsService.getAvancementComites().subscribe({
       next: (a) => { this.avancements = a; },
       error: () => { this.avancements = this.mockAvancements; },
+    });
+    this.loadPhase();
+  }
+
+  loadPhase(): void {
+    this.configService.getConfiguration().subscribe({
+      next: (config) => { this.phaseActive = config.phaseRecrutementActive; },
+      error: () => {}
+    });
+  }
+
+  setPhase(phase: string): void {
+    this.phaseLoading = true;
+    this.configService.setPhase(phase).subscribe({
+      next: (config) => { 
+        this.phaseActive = config.phaseRecrutementActive; 
+        this.phaseLoading = false; 
+      },
+      error: () => { this.phaseLoading = false; }
     });
   }
 

@@ -18,11 +18,11 @@
   <div class="cv-list">
     <div class="cv-card" *ngFor="let c of filtered">
       <div class="cv-left">
-        <div class="cv-avatar">{{ c.candidatNom[0] }}</div>
+        <div class="cv-avatar">{{ c.nom[0] }}</div>
         <div class="cv-info">
-          <div class="cv-nom">{{ c.candidatNom }}</div>
-          <div class="cv-email">{{ c.candidatEmail }}</div>
-          <div class="cv-poste">{{ c.posteVise }}</div>
+          <div class="cv-nom">{{ c.nom }}</div>
+          <div class="cv-email">{{ c.email }}</div>
+          <div class="cv-poste">{{ c.posteVise }} <span *ngIf="c.comiteVise">({{c.comiteVise}})</span></div>
         </div>
       </div>
 
@@ -58,24 +58,28 @@
   <div class="modal-overlay" *ngIf="showDetail && selected" (click)="showDetail = false">
     <div class="detail-panel" (click)="$event.stopPropagation()">
       <div class="modal-hd">
-        <h3>Détail — {{ selected.candidatNom }}</h3>
+        <h3>Détail — {{ selected.nom }}</h3>
         <button class="modal-close" (click)="showDetail = false">✕</button>
       </div>
       <div class="detail-body">
-        <div class="detail-row"><span class="dlabel">Email</span><span>{{ selected.candidatEmail }}</span></div>
-        <div class="detail-row"><span class="dlabel">Poste visé</span><span>{{ selected.posteVise }}</span></div>
+        <div class="detail-row"><span class="dlabel">Email</span><span>{{ selected.email }}</span></div>
+        <div class="detail-row"><span class="dlabel">Poste visé</span><span>{{ selected.posteVise }} <span *ngIf="selected.comiteVise">({{selected.comiteVise}})</span></span></div>
+        <div class="detail-row"><span class="dlabel">Motivation</span><p style="font-size: 0.9em; margin-top: 4px;">{{ selected.motivation }}</p></div>
         <div class="detail-row"><span class="dlabel">Date dépôt</span><span>{{ selected.dateDepot | date:'dd/MM/yyyy' }}</span></div>
         <div class="detail-row"><span class="dlabel">Statut</span><app-statut-badge [statut]="selected.statut"></app-statut-badge></div>
         <div class="detail-row" *ngIf="selected.scoreIA">
           <span class="dlabel">Score IA</span>
           <span class="score-big" [ngClass]="scoreColor(selected.scoreIA)">{{ selected.scoreIA }}/100</span>
         </div>
-        <div class="detail-row" *ngIf="selected.commentaire">
-          <span class="dlabel">Commentaire</span><span>{{ selected.commentaire }}</span>
+        <div class="detail-row" *ngIf="selected.justificationIA">
+          <span class="dlabel">Justification IA</span><p style="font-size: 0.9em; margin-top: 4px;">{{ selected.justificationIA }}</p>
+        </div>
+        <div class="detail-row" *ngIf="selected.commentaireRefus">
+          <span class="dlabel">Commentaire</span><span>{{ selected.commentaireRefus }}</span>
         </div>
         <div class="detail-row">
           <span class="dlabel">Fichier CV</span>
-          <a class="cv-link" href="#" (click)="$event.preventDefault()">📄 {{ selected.fichierCV }}</a>
+          <a class="cv-link" href="#" (click)="$event.preventDefault()">📄 Télécharger le CV</a>
         </div>
       </div>
       <div class="modal-ft" *ngIf="selected.statut === 'EN_ATTENTE'">

@@ -13,7 +13,7 @@ public class Utilisateur extends BaseEntity {
     private String email;
     @Column(name = "mot_de_passe")
     private String motDePasse;
-    private boolean actif = true;
+    @Builder.Default private boolean actif = true;
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
     @Column(name = "comite_id")

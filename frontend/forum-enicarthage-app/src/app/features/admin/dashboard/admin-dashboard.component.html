@@ -8,6 +8,23 @@
     <app-stat-card icon="🎓" [value]="kpis.workshopsValides + '/' + kpis.totalWorkshops" label="Workshops validés" sub="Événements confirmés" color="amber"></app-stat-card>
   </div>
 
+  <!-- Phase Control -->
+  <div class="card" style="margin-top: 24px;">
+    <div class="card-hd">Contrôle du Séquencement de Recrutement</div>
+    <div class="card-sub">Sélectionnez la phase active pour débloquer la validation des candidatures.</div>
+    <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+      <button *ngFor="let p of phases" 
+              class="btn" 
+              [class.btn-primary]="phaseActive === p.id"
+              [class.btn-outline]="phaseActive !== p.id"
+              [disabled]="phaseLoading"
+              (click)="setPhase(p.id)">
+        {{ p.label }}
+      </button>
+      <span *ngIf="phaseLoading" style="align-self: center;">⏳</span>
+    </div>
+  </div>
+
   <!-- Charts Row -->
   <div class="charts-row">
     <div class="card chart-card">

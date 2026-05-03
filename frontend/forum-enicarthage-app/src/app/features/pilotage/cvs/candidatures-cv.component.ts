@@ -1,8 +1,7 @@
 /* src/app/features/pilotage/cvs/candidatures-cv.component.ts */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CandidatureCVService } from '../../../core/services/api.services';
-import { CandidatureCV } from '../../../core/models';
+import { DemandeAdhesionService } from '../../../core/services/api.services';
 
 @Component({
   selector: 'app-candidatures-cv',
@@ -10,10 +9,10 @@ import { CandidatureCV } from '../../../core/models';
   styleUrls: ['./candidatures-cv.component.scss'],
 })
 export class CandidaturesCVComponent implements OnInit {
-  candidatures: CandidatureCV[] = [];
+  candidatures: any[] = [];
   loading = false;
   filter = 'TOUS';
-  selected: CandidatureCV | null = null;
+  selected: any | null = null;
   showDetail = false;
   showRefuserModal = false;
   refuserId: number | null = null;
@@ -22,15 +21,7 @@ export class CandidaturesCVComponent implements OnInit {
 
   filters = ['TOUS', 'EN_ATTENTE', 'ACCEPTE', 'REFUSE'];
 
-  mockData: CandidatureCV[] = [
-    { id: 1, candidatNom: 'Ali Mansour',    candidatEmail: 'ali@gmail.com',     posteVise: 'Chef Comite Design',      scoreIA: 87, statut: 'EN_ATTENTE', dateDepot: '2025-03-01', fichierCV: 'cv_ali.pdf',     candidatId: 10 },
-    { id: 2, candidatNom: 'Sara Trabelsi',  candidatEmail: 'sara@gmail.com',    posteVise: 'Coordinatrice Generale',  scoreIA: 94, statut: 'EN_ATTENTE', dateDepot: '2025-03-03', fichierCV: 'cv_sara.pdf',    candidatId: 11 },
-    { id: 3, candidatNom: 'Youssef Hamdi',  candidatEmail: 'youssef@gmail.com', posteVise: 'Chef Comite Logistique',  scoreIA: 72, statut: 'ACCEPTE',    dateDepot: '2025-02-28', fichierCV: 'cv_youssef.pdf', candidatId: 12 },
-    { id: 4, candidatNom: 'Lina Mrad',      candidatEmail: 'lina@gmail.com',    posteVise: 'Chef Comite Media',       scoreIA: 65, statut: 'REFUSE',     dateDepot: '2025-02-25', fichierCV: 'cv_lina.pdf',    candidatId: 13 },
-    { id: 5, candidatNom: 'Karim Belhaj',   candidatEmail: 'karim@gmail.com',   posteVise: 'Chef Comite Programme',   scoreIA: 81, statut: 'EN_ATTENTE', dateDepot: '2025-03-05', fichierCV: 'cv_karim.pdf',   candidatId: 14 },
-  ];
-
-  constructor(private cvService: CandidatureCVService, private fb: FormBuilder) {
+  constructor(private demandeService: DemandeAdhesionService, private fb: FormBuilder) {
     this.commentaireForm = this.fb.group({ commentaire: ['', Validators.required] });
   }
 
@@ -38,13 +29,13 @@ export class CandidaturesCVComponent implements OnInit {
 
   load(): void {
     this.loading = true;
-    this.cvService.getAll().subscribe({
+    this.demandeService.getAll().subscribe({
       next: c => { this.candidatures = c; this.loading = false; },
-      error: () => { this.candidatures = this.mockData; this.loading = false; },
+      error: () => { this.loading = false; },
     });
   }
 
-  get filtered(): CandidatureCV[] {
+  get filtered(): any[] {
     return this.filter === 'TOUS'
       ? this.candidatures
       : this.candidatures.filter(c => c.statut === this.filter);
@@ -56,24 +47,22 @@ export class CandidaturesCVComponent implements OnInit {
       : this.candidatures.filter(c => c.statut === f).length;
   }
 
-  analyserIA(c: CandidatureCV): void {
+  analyserIA(c: any): void {
     this.analysing = c.id;
-    this.cvService.analyserIA(c.id).subscribe({
+    this.demandeService.analyserIA(c.id).subscribe({
       next: updated => {
-        const idx = this.candidatures.findIndex(x => x.id === updated.id);
+        const idx = this.candidatures.findIndex((x: any) => x.id === updated.id);
         if (idx >= 0) this.candidatures[idx] = updated;
         this.analysing = null;
       },
       error: () => {
-        const idx = this.candidatures.findIndex(x => x.id === c.id);
-        if (idx >= 0) this.candidatures[idx].scoreIA = Math.floor(Math.random() * 30) + 65;
         this.analysing = null;
       },
     });
   }
 
-  accepter(c: CandidatureCV): void {
-    this.cvService.accepter(c.id).subscribe({
+  accepter(c: any): void {
+    this.demandeService.accepter(c.id).subscribe({
       next: () => { c.statut = 'ACCEPTE'; if (this.selected?.id === c.id) this.selected.statut = 'ACCEPTE'; },
       error: () => { c.statut = 'ACCEPTE'; },
     });
@@ -87,7 +76,7 @@ export class CandidaturesCVComponent implements OnInit {
 
   doRefuser(): void {
     if (this.commentaireForm.invalid) return;
-    this.cvService.refuser(this.refuserId!, this.commentaireForm.value.commentaire).subscribe({
+    this.demandeService.refuser(this.refuserId!, this.commentaireForm.value.commentaire).subscribe({
       next: () => { this.setRefuse(); },
       error: () => { this.setRefuse(); },
     });
@@ -99,7 +88,7 @@ export class CandidaturesCVComponent implements OnInit {
     this.showRefuserModal = false;
   }
 
-  openDetail(c: CandidatureCV): void { this.selected = c; this.showDetail = true; }
+  openDetail(c: any): void { this.selected = c; this.showDetail = true; }
 
   scoreColor(s: number): string {
     if (s >= 85) return 'score-high';

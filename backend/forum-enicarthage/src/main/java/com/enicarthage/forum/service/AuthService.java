@@ -3,6 +3,7 @@ package com.enicarthage.forum.service;
 import com.enicarthage.forum.dto.*;
 import com.enicarthage.forum.exception.ResourceNotFoundException;
 import com.enicarthage.forum.model.Utilisateur;
+import com.enicarthage.forum.model.RoleEnum;
 import com.enicarthage.forum.repository.UtilisateurRepository;
 import com.enicarthage.forum.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +75,7 @@ public class AuthService {
                                 .nom(googleUser.getNom())
                                 .email(googleUser.getEmail())
                                 .motDePasse("") // No password for OAuth users
-                                .role("MEMBRE") // Default role for new Google users
+                                .role(RoleEnum.MEMBRE) // Default role for new Google users
                                 .actif(true)
                                 .build()
                     );

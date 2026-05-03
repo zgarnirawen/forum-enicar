@@ -1,8 +1,10 @@
 package com.enicarthage.forum.controller;
 
 import com.enicarthage.forum.dto.*;
+import com.enicarthage.forum.dto.LoginRequest;
+import com.enicarthage.forum.dto.GoogleLoginRequest;
 import com.enicarthage.forum.service.AuthService;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

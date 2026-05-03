@@ -143,24 +143,35 @@ export class WorkshopService {
   delete(id: number): Observable<void> { return this.http.delete<void>(`${this.url}/${id}`); }
 }
 
-// ─── CANDIDATURE CV ───────────────────────────────────────────
+// ─── CONFIGURATION SYSTEME ───────────────────────────────────────────
 @Injectable({ providedIn: 'root' })
-export class CandidatureCVService {
+export class ConfigurationService {
+  private url = `${API}/configuration`;
+  constructor(private http: HttpClient) {}
+  getConfiguration(): Observable<any> { return this.http.get<any>(this.url); }
+  setPhase(phase: string): Observable<any> { 
+    return this.http.put<any>(`${this.url}/phase`, {}, { params: { phase } }); 
+  }
+}
+
+// ─── DEMANDE ADHESION ───────────────────────────────────────────
+@Injectable({ providedIn: 'root' })
+export class DemandeAdhesionService {
   private url = `${API}/candidatures`;
   constructor(private http: HttpClient) {}
-  getAll(): Observable<CandidatureCV[]> { return this.http.get<CandidatureCV[]>(this.url); }
-  getById(id: number): Observable<CandidatureCV> { return this.http.get<CandidatureCV>(`${this.url}/${id}`); }
-  upload(formData: FormData): Observable<CandidatureCV> {
-    return this.http.post<CandidatureCV>(`${this.url}/upload`, formData);
+  getAll(): Observable<any[]> { return this.http.get<any[]>(this.url); }
+  getById(id: number): Observable<any> { return this.http.get<any>(`${this.url}/${id}`); }
+  upload(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.url}/soumettre`, formData);
   }
-  accepter(id: number, commentaire?: string): Observable<CandidatureCV> {
-    return this.http.put<CandidatureCV>(`${this.url}/${id}/accepter`, {}, { params: commentaire ? { commentaire } : {} });
+  accepter(id: number): Observable<any> {
+    return this.http.put<any>(`${this.url}/${id}/accepter`, {});
   }
-  refuser(id: number, commentaire: string): Observable<CandidatureCV> {
-    return this.http.put<CandidatureCV>(`${this.url}/${id}/refuser`, {}, { params: { commentaire } });
+  refuser(id: number, commentaire: string): Observable<any> {
+    return this.http.put<any>(`${this.url}/${id}/refuser`, {}, { params: { commentaire } });
   }
-  analyserIA(id: number): Observable<CandidatureCV> {
-    return this.http.post<CandidatureCV>(`${this.url}/${id}/analyser`, {});
+  analyserIA(id: number): Observable<any> {
+    return this.http.post<any>(`${this.url}/${id}/analyser`, {});
   }
 }
 

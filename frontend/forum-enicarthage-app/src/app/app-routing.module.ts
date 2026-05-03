@@ -41,7 +41,14 @@ const routes: Routes = [
     loadChildren: () => import('./features/membre/membre.module').then(m => m.MembreModule)
   },
   // FIX: dedicated access-denied page (not redirect to login on 403)
+ 
   { path: 'access-denied', component: AccessDeniedComponent },
+  {
+  path: 'candidature',
+  loadChildren: () =>
+    import('./features/candidature/candidature.module')
+      .then(m => m.CandidatureModule),
+},
   { path: '**', redirectTo: 'auth/login' }
 ];
 

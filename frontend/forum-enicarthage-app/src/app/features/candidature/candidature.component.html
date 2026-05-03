@@ -1,0 +1,317 @@
+<!-- src/app/features/candidature/candidature.component.html -->
+
+<div class="candidature-page">
+
+  <!-- ─── PANEL GAUCHE ─────────────────────────────────────────────────────── -->
+  <div class="left-panel">
+    <div class="brand">
+      <div class="brand-logo">FE</div>
+      <span class="brand-name">Forum ENICarthage</span>
+    </div>
+
+    <div class="left-content">
+      <h1>Rejoignez<br><span class="accent">l'équipe du Forum</span><br>2025.</h1>
+      <p class="left-desc">
+        Déposez votre candidature pour participer à l'organisation du plus grand forum
+        entreprise-étudiants de Carthage.
+      </p>
+
+      <!-- Timeline des étapes -->
+      <div class="timeline">
+        <div class="tl-item" [class.active]="step === 1" [class.done]="step > 1">
+          <div class="tl-dot">{{ step > 1 ? '✓' : '1' }}</div>
+          <div class="tl-info">
+            <div class="tl-title">Informations personnelles</div>
+            <div class="tl-sub">Nom, email, téléphone</div>
+          </div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-item" [class.active]="step === 2" [class.done]="step > 2">
+          <div class="tl-dot">{{ step > 2 ? '✓' : '2' }}</div>
+          <div class="tl-info">
+            <div class="tl-title">Poste visé</div>
+            <div class="tl-sub">Rôle et comité souhaité</div>
+          </div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-item" [class.active]="step === 3" [class.done]="step > 3">
+          <div class="tl-dot">{{ step > 3 ? '✓' : '3' }}</div>
+          <div class="tl-info">
+            <div class="tl-title">Motivation & CV</div>
+            <div class="tl-sub">Lettre et dépôt de CV</div>
+          </div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-item" [class.active]="step === 4">
+          <div class="tl-dot">4</div>
+          <div class="tl-info">
+            <div class="tl-title">Confirmation</div>
+            <div class="tl-sub">Récapitulatif et envoi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-footer">
+      <div class="stat-row">
+        <div class="stat"><span class="stat-val">6</span><span class="stat-lbl">Comités</span></div>
+        <div class="stat"><span class="stat-val">200+</span><span class="stat-lbl">Membres</span></div>
+        <div class="stat"><span class="stat-val">50+</span><span class="stat-lbl">Entreprises</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PANEL DROIT ──────────────────────────────────────────────────────── -->
+  <div class="right-panel">
+    <div class="form-card">
+
+      <!-- SUCCÈS -->
+      <div class="success-state" *ngIf="success">
+        <div class="success-icon">✓</div>
+        <h2>Candidature envoyée !</h2>
+        <p>
+          Votre candidature a bien été reçue. Vous recevrez une réponse
+          par email une fois votre dossier examiné par notre équipe.
+        </p>
+        <a routerLink="/auth/login" class="btn-back-login">← Retour à la connexion</a>
+      </div>
+
+      <ng-container *ngIf="!success">
+
+        <!-- En-tête -->
+        <div class="card-header">
+          <div class="step-indicator">Étape {{ step }} / 4</div>
+          <h2>{{ stepTitle }}</h2>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="step * 25"></div>
+          </div>
+        </div>
+
+        <!-- Alerte erreur -->
+        <div class="alert-error" *ngIf="error">
+          <span>⚠</span> {{ error }}
+        </div>
+
+        <form [formGroup]="form">
+
+          <!-- ══ ÉTAPE 1 — Informations personnelles ══ -->
+          <div class="step-body" *ngIf="step === 1">
+            <div class="field" [class.has-error]="f['nom'].touched && f['nom'].invalid">
+              <label>Nom complet *</label>
+              <div class="input-wrap">
+                <span class="input-ico">👤</span>
+                <input type="text" formControlName="nom" placeholder="Prénom Nom">
+              </div>
+              <span class="field-err" *ngIf="f['nom'].touched && f['nom'].invalid">
+                Nom requis (minimum 2 caractères)
+              </span>
+            </div>
+
+            <div class="field" [class.has-error]="f['email'].touched && f['email'].invalid">
+              <label>Adresse email *</label>
+              <div class="input-wrap">
+                <span class="input-ico">✉</span>
+                <input type="email" formControlName="email" placeholder="vous@email.com">
+              </div>
+              <span class="field-err" *ngIf="f['email'].touched && f['email'].invalid">
+                Email invalide
+              </span>
+            </div>
+
+            <div class="field" [class.has-error]="f['telephone'].touched && f['telephone'].invalid">
+              <label>Téléphone *</label>
+              <div class="input-wrap">
+                <span class="input-ico">📞</span>
+                <input type="tel" formControlName="telephone" placeholder="+216 XX XXX XXX">
+              </div>
+              <span class="field-err" *ngIf="f['telephone'].touched && f['telephone'].invalid">
+                Numéro invalide
+              </span>
+            </div>
+
+            <div class="field">
+              <label>Profil LinkedIn <span class="optional">(optionnel)</span></label>
+              <div class="input-wrap">
+                <span class="input-ico">🔗</span>
+                <input type="url" formControlName="linkedinUrl"
+                       placeholder="https://linkedin.com/in/votre-profil">
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ ÉTAPE 2 — Poste et comité ══ -->
+          <div class="step-body" *ngIf="step === 2">
+            <div class="field-label">Quel poste souhaitez-vous ? *</div>
+            <div class="poste-grid">
+              <div class="poste-card"
+                   *ngFor="let p of postes"
+                   [class.selected]="f['posteVise'].value === p.value"
+                   (click)="form.get('posteVise')!.setValue(p.value)">
+                <div class="pc-icon">{{ p.icon }}</div>
+                <div class="pc-title">{{ p.label }}</div>
+                <div class="pc-desc">{{ p.desc }}</div>
+              </div>
+            </div>
+            <span class="field-err"
+                  *ngIf="f['posteVise'].touched && f['posteVise'].invalid">
+              Sélectionnez un poste
+            </span>
+
+            <ng-container *ngIf="needsComite">
+              <div class="field-label" style="margin-top: 20px;">
+                Quel comité visez-vous ? *
+              </div>
+              <div class="comite-grid">
+                <div class="comite-chip"
+                     *ngFor="let c of comites"
+                     [class.selected]="f['comiteVise'].value === c.value"
+                     (click)="form.get('comiteVise')!.setValue(c.value)">
+                  <span>{{ c.icon }}</span>
+                  <span>{{ c.label }}</span>
+                </div>
+              </div>
+              <span class="field-err"
+                    *ngIf="f['comiteVise'].touched && f['comiteVise'].invalid">
+                Sélectionnez un comité
+              </span>
+            </ng-container>
+
+            <div class="info-box" *ngIf="f['posteVise'].value === 'COORDINATRICE'">
+              ℹ️ La Coordinatrice supervise l'ensemble des comités. Aucun comité spécifique
+              n'est requis pour ce poste.
+            </div>
+          </div>
+
+          <!-- ══ ÉTAPE 3 — Motivation et CV ══ -->
+          <div class="step-body" *ngIf="step === 3">
+            <div class="field" [class.has-error]="f['motivation'].touched && f['motivation'].invalid">
+              <label>
+                Lettre de motivation *
+                <span class="char-count">{{ motivationLength }} / 100 min.</span>
+              </label>
+              <textarea formControlName="motivation" rows="7"
+                        placeholder="Décrivez vos motivations, votre expérience, et pourquoi vous souhaitez rejoindre l'équipe du Forum ENICarthage...">
+              </textarea>
+              <span class="field-err"
+                    *ngIf="f['motivation'].touched && f['motivation'].invalid">
+                Minimum 100 caractères requis
+              </span>
+            </div>
+
+            <!-- Upload CV -->
+            <div class="field">
+              <label>CV (PDF) *</label>
+              <div class="upload-zone"
+                   [class.drag-over]="dragOver"
+                   [class.has-file]="selectedFile"
+                   (dragover)="onDragOver($event)"
+                   (dragleave)="onDragLeave()"
+                   (drop)="onDrop($event)"
+                   (click)="cvInput.click()">
+
+                <ng-container *ngIf="!selectedFile">
+                  <div class="upload-icon">📄</div>
+                  <div class="upload-text">
+                    Glissez votre CV ici ou <span class="upload-link">parcourir</span>
+                  </div>
+                  <div class="upload-hint">PDF uniquement · Max 5 MB</div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedFile">
+                  <div class="file-preview">
+                    <span class="file-icon">📄</span>
+                    <div class="file-info">
+                      <div class="file-name">{{ selectedFile.name }}</div>
+                      <div class="file-size">{{ fileSizeLabel }}</div>
+                    </div>
+                    <button type="button" class="file-remove"
+                            (click)="$event.stopPropagation(); removeFile()">✕</button>
+                  </div>
+                </ng-container>
+              </div>
+              <input #cvInput type="file" accept=".pdf"
+                     style="display:none" (change)="onFileSelected($event)">
+              <span class="field-err" *ngIf="fileError">{{ fileError }}</span>
+            </div>
+          </div>
+
+          <!-- ══ ÉTAPE 4 — Récapitulatif ══ -->
+          <div class="step-body" *ngIf="step === 4">
+            <div class="recap-title">Vérifiez vos informations avant d'envoyer</div>
+
+            <div class="recap-section">
+              <div class="recap-label">Informations personnelles</div>
+              <div class="recap-row"><span>Nom</span><strong>{{ f['nom'].value }}</strong></div>
+              <div class="recap-row"><span>Email</span><strong>{{ f['email'].value }}</strong></div>
+              <div class="recap-row"><span>Téléphone</span><strong>{{ f['telephone'].value }}</strong></div>
+              <div class="recap-row" *ngIf="f['linkedinUrl'].value">
+                <span>LinkedIn</span>
+                <strong>{{ f['linkedinUrl'].value }}</strong>
+              </div>
+            </div>
+
+            <div class="recap-section">
+              <div class="recap-label">Poste visé</div>
+              <div class="recap-row">
+                <span>Poste</span>
+                <strong>{{ f['posteVise'].value | posteLabel }}</strong>
+              </div>
+              <div class="recap-row" *ngIf="f['comiteVise'].value">
+                <span>Comité</span>
+                <strong>{{ f['comiteVise'].value }}</strong>
+              </div>
+            </div>
+
+            <div class="recap-section">
+              <div class="recap-label">Documents</div>
+              <div class="recap-row">
+                <span>CV</span>
+                <strong>{{ selectedFile?.name }}</strong>
+              </div>
+              <div class="recap-row">
+                <span>Motivation</span>
+                <strong>{{ motivationLength }} caractères</strong>
+              </div>
+            </div>
+
+            <div class="recap-notice">
+              En soumettant ce formulaire, vous acceptez que vos informations soient
+              traitées par l'équipe organisatrice du Forum ENICarthage.
+            </div>
+          </div>
+
+        </form>
+
+        <!-- ─── Navigation ─── -->
+        <div class="nav-buttons">
+          <button class="btn-back"
+                  *ngIf="step > 1"
+                  (click)="prevStep()">
+            ← Retour
+          </button>
+
+          <button class="btn-next"
+                  *ngIf="step < 4"
+                  (click)="nextStep()">
+            Continuer →
+          </button>
+
+          <button class="btn-submit"
+                  *ngIf="step === 4"
+                  [class.loading]="loading"
+                  [disabled]="loading"
+                  (click)="submit()">
+            <span *ngIf="!loading">Envoyer ma candidature ✓</span>
+            <span *ngIf="loading" class="spinner"></span>
+          </button>
+        </div>
+
+        <div class="form-footer">
+          Déjà membre ?
+          <a routerLink="/auth/login">Se connecter</a>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+</div>
